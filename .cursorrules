@@ -1,0 +1,20 @@
+## Runtime and Module System Rules
+
+- Node version: Use nvm and pin to v22.18.0 for all commands.
+  - `nvm use` should be run automatically; `.nvmrc` is present with `v22.18.0`.
+
+- Module system: ES Modules only.
+  - `package.json` must include: `"type": "module"`.
+  - Use `import`/`export` syntax, never `require`/`module.exports`.
+  - When importing local files, include the file extension (e.g., `import x from './file.js'`).
+  - Prefer `.js` with ESM over `.cjs`/`.mjs` unless there is a strong reason.
+
+- CommonJS interop:
+  - Do not introduce `__dirname`/`__filename` directly. Use `fileURLToPath(import.meta.url)` when needed.
+  - Avoid mixing CJS and ESM in this project.
+
+- Scripts and tooling:
+  - Any new Node scripts must be ESM-compliant.
+  - CI or local commands should assume Node 22.18.0 via nvm.
+
+
