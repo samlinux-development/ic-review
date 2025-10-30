@@ -1,6 +1,9 @@
 import axios from 'axios';
+import { DEFAULT_QUERY_LIMIT } from '../config.js';
 
 const ICP_BASE_URL = 'https://ic-api.internetcomputer.org/api/v3/proposals';
+// only these topics are used, because we only want to send emails for these topics
+// add new topics here if you want to send emails for them
 export const DEFAULT_TOPICS = [
   'TOPIC_APPLICATION_CANISTER_MANAGEMENT',
   'TOPIC_PROTOCOL_CANISTER_MANAGEMENT',
@@ -70,7 +73,7 @@ export function computeProposalsResponse(data, query) {
 
 export async function fetchProposalsWithLatestIndex(queryParams) {
   const url0 = new URL(ICP_BASE_URL);
-  url0.searchParams.set('limit', '0');
+  url0.searchParams.set('limit', String(DEFAULT_QUERY_LIMIT));
   {
     const topics = Array.isArray(queryParams?.include_topic)
       ? queryParams.include_topic
@@ -79,7 +82,6 @@ export async function fetchProposalsWithLatestIndex(queryParams) {
       : DEFAULT_TOPICS;
     topics.forEach((t) => url0.searchParams.append('include_topic', t));
   }
-
   const metaResp = await axios.get(url0.toString(), { timeout: 15000 });
   const maxIndex = metaResp?.data?.max_proposal_index;
 
@@ -88,7 +90,7 @@ export async function fetchProposalsWithLatestIndex(queryParams) {
     url.searchParams.set('max_proposal_index', String(maxIndex));
   }
   if (queryParams?.offset) url.searchParams.set('offset', String(queryParams.offset));
-  if (queryParams?.limit) url.searchParams.set('limit', String(queryParams.limit));
+  url.searchParams.set('limit', String(queryParams?.limit || DEFAULT_QUERY_LIMIT));
   {
     const topics = Array.isArray(queryParams?.include_topic)
       ? queryParams.include_topic
