@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { DEFAULT_QUERY_LIMIT } from '../config.js';
+import { DEFAULT_QUERY_LIMIT } from './config.js';
 
 const ICP_BASE_URL = 'https://ic-api.internetcomputer.org/api/v3/proposals';
 // only these topics are used, because we only want to send emails for these topics

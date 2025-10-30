@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { TOPIC_RECIPIENTS } from '../config.js';
+import { TOPIC_RECIPIENTS } from './config.js';
 import { filterUnsentProposals, markProposalsSent } from './storage.js';
 import { logger } from './logger.js';
 
