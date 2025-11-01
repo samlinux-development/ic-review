@@ -57,7 +57,7 @@ export async function markProposalsSent(proposalIds, options = {}) {
 export async function filterUnsentProposals(proposals) {
   const sent = await loadSentMap();
   return (Array.isArray(proposals) ? proposals : []).filter((p) => {
-    const id = p?.id ?? p?.proposal_id;
+    const id = p?.proposal_id ?? p?.id;
     return id !== undefined && sent[String(id)] === undefined;
   });
 }

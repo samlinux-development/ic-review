@@ -1,15 +1,7 @@
 import axios from 'axios';
-import { DEFAULT_QUERY_LIMIT } from './config.js';
+import { DEFAULT_QUERY_LIMIT, DEFAULT_TOPICS } from './config.js';
 
 const ICP_BASE_URL = 'https://ic-api.internetcomputer.org/api/v3/proposals';
-// only these topics are used, because we only want to send emails for these topics
-// add new topics here if you want to send emails for them
-export const DEFAULT_TOPICS = [
-  'TOPIC_APPLICATION_CANISTER_MANAGEMENT',
-  'TOPIC_PROTOCOL_CANISTER_MANAGEMENT',
-  'TOPIC_GOVERNANCE',
-
-];
 
 export const STATUS_OPTIONS = [
   'ADOPTED',
@@ -62,9 +54,9 @@ export function computeProposalsResponse(data, query) {
   }
 
   const sorted = [...filtered].sort((a, b) => {
-    const aId = Number(a?.id ?? a?.proposal_id ?? 0);
-    const bId = Number(b?.id ?? b?.proposal_id ?? 0);
-    return aId - bId; // asc by id
+    const aId = Number(a?.proposal_id ?? a?.id ?? 0);
+    const bId = Number(b?.proposal_id ?? b?.id ?? 0);
+    return aId - bId; // asc by proposal_id
   });
 
   if (Array.isArray(parsed)) return sorted;
@@ -82,6 +74,7 @@ export async function fetchProposalsWithLatestIndex(queryParams) {
       : DEFAULT_TOPICS;
     topics.forEach((t) => url0.searchParams.append('include_topic', t));
   }
+  console.log('url0', url0.toString());
   const metaResp = await axios.get(url0.toString(), { timeout: 15000 });
   const maxIndex = metaResp?.data?.max_proposal_index;
 

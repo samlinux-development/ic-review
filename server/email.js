@@ -43,8 +43,12 @@ export async function sendProposalsEmail({ proposals, transportOptions = {}, mai
   });
 
   const from = process.env.MAIL_FROM || 'support@sdg-office.at';
-  const to = process.env.MAIL_TO || ''; // comma-separated list
-  const subject = mailOptions.subject || process.env.MAIL_SUBJECT || 'ICP Proposals Update';
+  const to = mailOptions.to || ''; // required via mailOptions (from config.js)
+  const subject = mailOptions.subject || 'ICP Proposals Notification';
+
+  if (!to || !to.trim()) {
+    return { sent: false, reason: 'no_recipient' };
+  }
 
   const lines = proposals.map((p) => {
     const id = p?.id ?? p?.proposal_id ?? 'unknown';
@@ -59,7 +63,7 @@ export async function sendProposalsEmail({ proposals, transportOptions = {}, mai
 
   const dashboardBase = process.env.PROPOSAL_DASHBOARD_BASE_URL || 'https://dashboard.internetcomputer.org/proposal';
   const htmlItems = proposals.map((p) => {
-    const id = p?.id ?? p?.proposal_id ?? 'unknown';
+    const id = p?.proposal_id ?? 'unknown';
     const timestamp = p?.proposal_timestamp_seconds ?? p?.created_at_time ?? '';
     const title = (p?.title || '').toString();
     const status = (p?.status || '').toString();
@@ -122,10 +126,9 @@ function resolveRecipientGroups(proposals) {
     }
   }
 
-  // Fallback: send unmatched to MAIL_TO if configured
-  const fallbackTo = (process.env.MAIL_TO || '').split(',').map((s) => s.trim()).filter(Boolean);
-  if (unmatched.length > 0 && fallbackTo.length > 0) {
-    groups.push({ key: fallbackTo.join(','), to: uniq(fallbackTo), proposals: unmatched });
+  // Note: unmatched proposals are not sent (configure all topics in config.js)
+  if (unmatched.length > 0) {
+    logger.warn({ count: unmatched.length, topics: [...new Set(unmatched.map(p => p?.topic))] }, 'proposals with unmatched topics');
   }
 
   return groups;
@@ -150,7 +153,7 @@ export async function sendProposalsByConfig({ proposals, transportOptions = {}, 
     results.push({ to: group.to, ...res });
   }
   if (dedupe) {
-    const sentIds = toProcess.map((p) => p?.id ?? p?.proposal_id).filter((v) => v !== undefined);
+    const sentIds = toProcess.map((p) => p?.proposal_id ?? p?.id).filter((v) => v !== undefined);
     await markProposalsSent(sentIds);
   }
   return { sent: true, results };

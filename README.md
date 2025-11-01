@@ -34,7 +34,7 @@ Server starts on port 3001 by default.
 
 ### Config (brief)
 - Upstream API: `https://ic-api.internetcomputer.org/api/v3/proposals`
-- Email via SMTP: set `SMTP_*`, `MAIL_FROM`, `MAIL_TO` (fallback)
+- Email via SMTP: set `SMTP_*`, `MAIL_FROM`
 - Per-topic recipients: edit `server/config.js`
 - Dashboard URL override: `PROPOSAL_DASHBOARD_BASE_URL`
 

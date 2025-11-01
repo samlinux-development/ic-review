@@ -7,11 +7,18 @@
 // ];
 
 export const TOPIC_RECIPIENTS = [
-  { topics: ['TOPIC_APPLICATION_CANISTER_MANAGEMENT', 'TOPIC_PROTOCOL_CANISTER_MANAGEMENT', 'TOPIC_GOVERNANCE'], 
+  { topics: ['TOPIC_APPLICATION_CANISTER_MANAGEMENT'], 
     to: ['rbole@samlinux.at'] 
   },
 ];
 
-export const DEFAULT_QUERY_LIMIT = 100;
+// Extract all unique topics from TOPIC_RECIPIENTS
+export const DEFAULT_TOPICS = [
+  ...new Set(
+    TOPIC_RECIPIENTS.flatMap((entry) => entry?.topics || [])
+  )
+];
+
+export const DEFAULT_QUERY_LIMIT = 50;
 
 
