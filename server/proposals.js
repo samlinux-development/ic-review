@@ -74,7 +74,7 @@ export async function fetchProposalsWithLatestIndex(queryParams) {
       : DEFAULT_TOPICS;
     topics.forEach((t) => url0.searchParams.append('include_topic', t));
   }
-  console.log('url0', url0.toString());
+  
   const metaResp = await axios.get(url0.toString(), { timeout: 15000 });
   const maxIndex = metaResp?.data?.max_proposal_index;
 
